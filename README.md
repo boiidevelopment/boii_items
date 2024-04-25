@@ -1,2 +1,2 @@
 # boii_items
-FiveM Item Managment System
+Work in progress. Will be released a.s.a.p.
