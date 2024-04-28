@@ -2,6 +2,8 @@
 
 # THIS RESOURCE IS STILL IN ALPHA STAGES IT WILL BE IMPROVED ON. SOME BUGS ARE TOO BE EXPECTED!
 
+![ITEMS_THUMB](https://github.com/boiidevelopment/boii_items/assets/90377400/ef81187a-ecf7-4fc3-a868-28614aa523fb)
+
 ## 🌍 Overview
 
 A comprehensive, mostly standalone item management resource. 
