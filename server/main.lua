@@ -142,27 +142,49 @@ exports('use_weapon', use_weapon)
 
 --- Initializes usable items on load
 local function initialize_usable_items()
+    local registered_items = {}
+    local duplicate_items = {}
     for category, items in pairs(item_list) do
         for item_id, item_data in pairs(items) do
-            if item_data.category == 'weapons' then
-                utils.items.register(item_id, function(_src)
-                    if _src and _src ~= 0 then
-                        use_weapon(_src, item_id)
-                    end
-                end)
-            end
-            if item_data.on_use then
-                utils.items.register(item_id, function(_src)
-                    if _src and _src ~= 0 then
-                        use_item(_src, item_id)
-                    end
-                end)
+            if registered_items[item_id] then
+                if not duplicate_items[item_id] then
+                    duplicate_items[item_id] = {categories = {registered_items[item_id]}, count = 1}
+                end
+                duplicate_items[item_id].categories[#duplicate_items[item_id].categories + 1] = category
+                duplicate_items[item_id].count = duplicate_items[item_id].count + 1
+                break
+            else
+                registered_items[item_id] = category
+                if item_data.category == 'weapons' then
+                    utils.items.register(item_id, function(_src)
+                        if _src and _src ~= 0 then
+                            use_weapon(_src, item_id)
+                        end
+                    end)
+                end
+                if item_data.on_use then
+                    utils.items.register(item_id, function(_src)
+                        if _src and _src ~= 0 then
+                            use_item(_src, item_id)
+                        end
+                    end)
+                end
             end
         end
     end
+    if next(duplicate_items) then
+        debug_log('warn', 'Duplicate items found and skipped. Please remove one of them:')
+        for item_id, data in pairs(duplicate_items) do
+            debug_log('warn', 'Item ID: ' .. item_id .. ', Categories: ' .. table.concat(data.categories, ', ') .. ', Count: ' .. data.count)
+        end
+    end
+
     debug_log('info', 'Initialization of usable items within categories completed.')
 end
+
 initialize_usable_items()
+
+
 
 --- Drops an item from the player's inventory and creates a item in the world.
 -- @param _src number: The source player identifier.
