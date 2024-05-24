@@ -19,13 +19,17 @@ author 'boiidevelopment'
 repository 'https://github.com/boiidevelopment/boii_items'
 lua54 'yes'
 
+files {
+    'assets/**/**/**',
+}
+
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/config.lua',
     'server/database.lua',
     'server/items/*',
     'server/main.lua',
-    'server/exports.lua'
+    'server/testing.lua'
 }
 
 client_scripts {
