@@ -11,8 +11,7 @@
 
 --- @section Constants
 
---- @field TARGET: Target system to use this is set in server/config.lua
-local TARGET = config.target
+TARGET = config.target
 
 --- @section Variables
 
@@ -102,10 +101,8 @@ RegisterNetEvent('boii_items:cl:progressbar', function(data)
     utils.ui.progressbar(data, function(success)
         if success then
             print("Item use completed successfully.")
-            -- Further actions can be triggered here if necessary
         else
             print("Item use was cancelled or failed to complete.")
-            -- Handle cancellation or failure case
         end
     end)
 end)
@@ -148,8 +145,6 @@ RegisterNetEvent('boii_items:cl:drop_item', function(_src, drop_data)
     end
     local entity_net_id = NetworkGetNetworkIdFromEntity(obj)
     local entity_id = 'dropped_item_' .. tostring(entity_net_id)
-
-    -- Support for other targets will be added asap!
     if TARGET == 'boii_target' then
         exports.boii_target:add_entity_zone({ obj }, {
             id = entity_id,
@@ -161,14 +156,39 @@ RegisterNetEvent('boii_items:cl:drop_item', function(_src, drop_data)
                 {
                     label = 'Pick Up ' .. drop_data.amount .. 'x '.. drop_data.label,
                     icon = 'fa-solid fa-box-open',
-                    action_type = 'server',
-                    action = 'boii_items:sv:pick_up_item',
-                    params = {
-                        unique_id = entity_id,
-                        net_id = entity_net_id
-                    }
+                    action_type = 'function',
+                    action = function() 
+                        TriggerServerEvent('boii_items:sv:pick_up_item', { unique_id = entity_id, net_id = entity_net_id })
+                    end
                 },
             }
+        })
+    elseif TARGET == 'qb-target' then
+        exports['qb-target']:AddEntityZone(entity_id, obj, {
+            name = entity_id,
+            heading = 0.0,
+            debugPoly = false,
+        }, {
+            distance = 2.5,
+            options = {
+                {
+                    icon = 'fa-solid fa-hand',
+                    label = 'Pick Up ' .. drop_data.amount .. 'x '.. drop_data.label,
+                    action = function(entity) 
+                        TriggerServerEvent('boii_items:sv:pick_up_item', { unique_id = entity_id, net_id = entity_net_id })
+                    end
+                }
+            }
+        })
+    elseif TARGET == 'ox_target' then
+        exports.ox_target:addLocalEntity(obj, {
+            name = entity_id,
+            icon = 'fa-solid fa-box-open',
+            label = 'Pick Up ' .. drop_data.amount .. 'x '.. drop_data.label,
+            distance = 2.5,
+            onSelect = function()
+                TriggerServerEvent('boii_items:sv:pick_up_item', { unique_id = entity_id, net_id = entity_net_id })
+            end
         })
     end
     TriggerServerEvent('boii_items:sv:add_drop_data', entity_id, drop_data)
@@ -181,7 +201,13 @@ end)
 RegisterNetEvent('boii_items:cl:pick_up_item', function(_src, net_id, entity_id)
     local player_id = PlayerId()
     local obj = NetworkGetEntityFromNetworkId(net_id)
-    exports.boii_target:remove_target(entity_id)
+    if TARGET == 'boii_target' then
+        exports.boii_target:remove_target(entity_id)
+    elseif TARGET == 'qb-target' then
+        exports['qb-target']:RemoveZone(entity_id)
+    elseif TARGET == 'ox_target' then
+        exports.ox_target:removeEntity(net_id, entity_id)
+    end
     if DoesEntityExist(obj) then
         if GetPlayerFromServerId(_src) == player_id then
             local anim_dict = 'random@domestic'
