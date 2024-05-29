@@ -58,29 +58,24 @@ local function use_item(_src, item_id)
         print('_src not provided')
         return
     end
-
     local item = find_item(item_id)
     if not item then
         print('item not found for item_id:', item_id)
         return
     end
-
     local has_item = utils.fw.has_item(_src, item_id, 1)
     if not has_item then
         print('Item not found as item in inventory')
         return
     end
-
     if not item.on_use then
         print('on_use data not found for item:', item_id)
         return
     end
-
     if item.on_use.progressbar then
         TriggerClientEvent('boii_items:cl:progressbar', _src, item.on_use.progressbar)
         return
     end
-
     if item.on_use.event then
         if item.on_use.event.event_type == 'client' then
             TriggerClientEvent(item.on_use.event.event, _src, item.on_use.event.params)
@@ -88,11 +83,9 @@ local function use_item(_src, item_id)
             TriggerEvent(item.on_use.event.event, _src, item.on_use.event.params)
         end
     end
-
     if item.on_use.statuses and next(item.on_use.statuses) ~= nil then
         utils.fw.adjust_statuses(_src, item.on_use.statuses)
     end
-
     if item.on_use.buffs or item.on_use.debuffs or item.on_use.effects then
         local player = exports.boii_statuses:get_player(_src)
         if item.on_use.buffs then
@@ -100,20 +93,17 @@ local function use_item(_src, item_id)
                 player.apply_effect('buffs', buff_id)
             end
         end
-
         if item.on_use.debuffs then
             for _, debuff_id in ipairs(item.on_use.debuffs) do
                 player.apply_effect('debuffs', debuff_id)
             end
         end
-
         if item.on_use.effects then
             for _, effect_id in ipairs(item.on_use.effects) do
                 player.apply_effect('effects', effect_id)
             end
         end
     end
-
     if item.on_use.notify then
         utils.ui.notify(_src, item.on_use.notify)
     end
@@ -181,10 +171,7 @@ local function initialize_usable_items()
 
     debug_log('info', 'Initialization of usable items within categories completed.')
 end
-
 initialize_usable_items()
-
-
 
 --- Drops an item from the player's inventory and creates a item in the world.
 -- @param _src number: The source player identifier.
@@ -278,26 +265,31 @@ exports('pick_up_item', pick_up_item)
 -- @param item_id string: The ID of the item being consumed.
 local function consume_item(_src, data)
     debug_log('info', string.format('Consume item event fired by player %d for item ID %s.', _src, data.item))
-    if not data.item then debug_log('info', 'Item missing.') return end
+    if not data.item then 
+        debug_log('info', 'Item missing.') 
+        return 
+    end
+
     local item_data, category_name = find_item(data.item)
     if item_data and item_data.on_use then
         if data.statuses and next(data.statuses) ~= nil then
             utils.fw.adjust_statuses(_src, data.statuses)
             debug_log('info', string.format('Statuses modified for player %d using item ID %s.', _src, data.item))
         end
-        if data.buffs or data.debuffs or data.effects then
+        if (data.buffs and next(data.buffs) ~= nil) or (data.debuffs and next(data.debuffs) ~= nil) or (data.effects and next(data.effects) ~= nil) then
+           
             local player = exports.boii_statuses:get_player(_src)
-            if data.buffs then
+            if data.buffs and next(data.buffs) ~= nil then
                 for _, buff_id in ipairs(data.buffs) do
                     player.apply_effect('buffs', buff_id)
                 end
             end
-            if data.debuffs then
+            if data.debuffs and next(data.debuffs) ~= nil then
                 for _, debuff_id in ipairs(data.debuffs) do
                     player.apply_effect('debuffs', debuff_id)
                 end
             end
-            if data.effects then
+            if data.effects and next(data.effects) ~= nil then
                 for _, effect_id in ipairs(data.effects) do
                     player.apply_effect('effects', effect_id)
                 end
@@ -311,7 +303,7 @@ local function consume_item(_src, data)
             should_save = true
         })
     else
-        debug_log('err', string.format('Error: Item ID {%s} not found or not usable.', item))
+        debug_log('err', string.format('Error: Item ID {%s} not found or not usable.', data.item))
     end
 end
 exports('consume_item', consume_item)
