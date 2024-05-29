@@ -14,6 +14,9 @@
 --- Config table.
 config = config or {}
 
+--- Target System
+config.target = 'qb-target' -- Target resource. Options: boii_target, qb-target, ox_target
+
 --- Item list table.
 item_list = item_list or {}
 
