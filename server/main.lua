@@ -13,6 +13,18 @@
 --- Import utility library from a shared resource.
 utils = exports.boii_utils:get_utils()
 
+--- @section Version check
+
+--- Version check options
+-- @field resource_name: The name of the resource to check, you can set a value here or use the current resource.
+-- @field url_path: The path to your json file.
+-- @field callback: Callback to invoking resource version check details *optional*
+local opts = {
+    resource_name = 'boii_items',
+    url_path = 'boiidevelopment/fivem_resource_versions/main/versions.json',
+}
+utils.version.check(opts)
+
 --- @section State bags
 
 --- @field dropped_items: Stores dropped items.
