@@ -13,7 +13,7 @@ fx_version 'cerulean'
 games { 'gta5', 'rdr3' }
 
 name 'boii_items'
-version '0.3.0'
+version '0.3.1'
 description 'BOII | Development - Utility: Items'
 author 'boiidevelopment'
 repository 'https://github.com/boiidevelopment/boii_items'
