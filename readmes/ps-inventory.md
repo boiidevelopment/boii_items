@@ -323,3 +323,62 @@ local function CreateNewDrop(source, fromSlot, toSlot, itemAmount, created)
 	end
 end
 ```
+
+### Give Item Command
+
+Doing the following will allow adding items through the give item command by passing QBCore.Shared.
+
+In `ps-inventory/server/main.lua` find the command `giveitem` and replace with the following: 
+
+```lua
+QBCore.Commands.Add("giveitem", "Give An Item (Admin Only)", {{name="id", help="Player ID"},{name="item", help="Name of the item (not a label)"}, {name="amount", help="Amount of items"}}, false, function(source, args)
+	local id = tonumber(args[1])
+	local Player = QBCore.Functions.GetPlayer(id)
+	local amount = tonumber(args[3]) or 1
+	local boii_item = exports.boii_items:find_item(args[2])
+    local itemData = boii_item or QBCore.Shared.Items[tostring(args[2]):lower()]
+	if Player then
+			if itemData then
+				-- check iteminfo
+				local info = {}
+				if itemData["name"] == "id_card" then
+					info.citizenid = Player.PlayerData.citizenid
+					info.firstname = Player.PlayerData.charinfo.firstname
+					info.lastname = Player.PlayerData.charinfo.lastname
+					info.birthdate = Player.PlayerData.charinfo.birthdate
+					info.gender = Player.PlayerData.charinfo.gender
+					info.nationality = Player.PlayerData.charinfo.nationality
+				elseif itemData["name"] == "driver_license" then
+					info.firstname = Player.PlayerData.charinfo.firstname
+					info.lastname = Player.PlayerData.charinfo.lastname
+					info.birthdate = Player.PlayerData.charinfo.birthdate
+					info.type = "Class C Driver License"
+				elseif itemData["type"] == "weapon" or (boii_item and boii_item.category == 'weapons') then
+					amount = 1
+					info.serie = tostring(QBCore.Shared.RandomInt(2) .. QBCore.Shared.RandomStr(3) .. QBCore.Shared.RandomInt(1) .. QBCore.Shared.RandomStr(2) .. QBCore.Shared.RandomInt(3) .. QBCore.Shared.RandomStr(4))
+					info.quality = 100
+				elseif itemData["name"] == "harness" then
+					info.uses = 20
+				elseif itemData["name"] == "markedbills" then
+					info.worth = math.random(5000, 10000)
+				elseif itemData["name"] == "labkey" then
+					info.lab = exports["qb-methlab"]:GenerateRandomLab()
+				elseif itemData["name"] == "printerdocument" then
+					info.url = "https://cdn.discordapp.com/attachments/870094209783308299/870104331142189126/Logo_-_Display_Picture_-_Stylized_-_Red.png"
+				elseif QBCore.Shared.Items[itemData["name"]]["decay"] and QBCore.Shared.Items[itemData["name"]]["decay"] > 0 then
+					info.quality = 100
+				end
+
+				if AddItem(id, itemData["name"], amount, false, info) then
+					QBCore.Functions.Notify(source, "You Have Given " ..GetPlayerName(id).." "..amount.." "..itemData["name"].. "", "success")
+				else
+					QBCore.Functions.Notify(source, "Can\'t give item!", "error")
+				end
+			else
+				QBCore.Functions.Notify(source, "Item Does Not Exist", "error")
+			end
+	else
+		QBCore.Functions.Notify(source,  "Player Is Not Online", "error")
+	end
+end, "admin")
+```
