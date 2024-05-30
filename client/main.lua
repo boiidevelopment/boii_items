@@ -238,7 +238,6 @@ RegisterNetEvent('boii_items:cl:equip_weapon', function(item_id, weapon_data)
         SetCurrentPedWeapon(player_ped, `WEAPON_UNARMED`, true)
         RemoveAllPedWeapons(player_ped, true)
         current_weapon = nil
-        print("Weapon unequipped: " .. item_id)
         return
     end
     GiveWeaponToPed(player_ped, weapon_hash, weapon_data.ammo, false, true)
@@ -253,7 +252,6 @@ RegisterNetEvent('boii_items:cl:equip_weapon', function(item_id, weapon_data)
                         if compat.weapon == item_id then
                             local component_hash = GetHashKey(compat.component)
                             GiveWeaponComponentToPed(player_ped, weapon_hash, component_hash)
-                            print("Attachment equipped: " .. attachment_id .. " with component: " .. compat.component)
                             break
                         end
                     end
@@ -396,20 +394,7 @@ CreateThread(function()
         if IsPlayerFreeAiming(PlayerId()) and current_weapon and current_weapon.hash == weapon_hash then
             local current_ammo = GetAmmoInPedWeapon(player_ped, weapon_hash)
             if current_ammo <= 0 or current_weapon.data.durability <= 0 then
-                if current_ammo <= 0 then
-                    TriggerEvent('chat:addMessage', {
-                        color = {255, 0, 0},
-                        multiline = true,
-                        args = {"System", "You are out of ammo!"}
-                    })
-                elseif current_weapon.data.durability <= 0 then
-                    DisablePlayerFiring(player_ped, true)
-                    TriggerEvent('chat:addMessage', {
-                        color = {255, 0, 0},
-                        multiline = true,
-                        args = {"System", "Your weapon is too damaged to use!"}
-                    })
-                end
+                DisablePlayerFiring(player_ped, true)
             end
             if IsPedShooting(player_ped) then
                 SetPedAmmo(player_ped, weapon_hash, current_ammo)
