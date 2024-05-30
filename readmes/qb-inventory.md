@@ -284,6 +284,63 @@ RegisterNUICallback('DropItem', function(item, cb)
 end)
 ```
 
+### Give Item Command
+
+Doing the following will allow adding items through the give item command by passing QBCore.Shared.
+
+In `qb-inventory/server/commands.lua` find the command `giveitem` and replace with the following: 
+
+```lua
+QBCore.Commands.Add('giveitem', 'Give An Item (Admin Only)', { { name = 'id', help = 'Player ID' }, { name = 'item', help = 'Name of the item (not a label)' }, { name = 'amount', help = 'Amount of items' } }, false, function(source, args)
+    local id = tonumber(args[1])
+    local player = QBCore.Functions.GetPlayer(id)
+    local amount = tonumber(args[3]) or 1
+    local boii_item = exports.boii_items:find_item(args[2])
+    local itemData = boii_item or QBCore.Shared.Items[tostring(args[2]):lower()]
+
+    if player then
+        if itemData then
+            local info = {}
+            if itemData['name'] == 'id_card' then
+                info.citizenid = player.PlayerData.citizenid
+                info.firstname = player.PlayerData.charinfo.firstname
+                info.lastname = player.PlayerData.charinfo.lastname
+                info.birthdate = player.PlayerData.charinfo.birthdate
+                info.gender = player.PlayerData.charinfo.gender
+                info.nationality = player.PlayerData.charinfo.nationality
+            elseif itemData['name'] == 'driver_license' then
+                info.firstname = player.PlayerData.charinfo.firstname
+                info.lastname = player.PlayerData.charinfo.lastname
+                info.birthdate = player.PlayerData.charinfo.birthdate
+                info.type = 'Class C Driver License'
+            elseif itemData['type'] == 'weapon' or (boii_item and boii_item.category == 'weapons') then
+                amount = 1
+                info.serie = tostring(QBCore.Shared.RandomInt(2) .. QBCore.Shared.RandomStr(3) .. QBCore.Shared.RandomInt(1) .. QBCore.Shared.RandomStr(2) .. QBCore.Shared.RandomInt(3) .. QBCore.Shared.RandomStr(4))
+                info.quality = 100
+            elseif itemData['name'] == 'harness' then
+                info.uses = 20
+            elseif itemData['name'] == 'markedbills' then
+                info.worth = math.random(5000, 10000)
+            elseif itemData['name'] == 'printerdocument' then
+                info.url = 'https://cdn.discordapp.com/attachments/870094209783308299/870104331142189126/Logo_-_Display_Picture_-_Stylized_-_Red.png'
+            end
+
+            if AddItem(id, itemData['name'] or boii_item.id, amount, false, info, 'give item command') then
+                QBCore.Functions.Notify(source, Lang:t('notify.yhg') .. GetPlayerName(id) .. ' ' .. amount .. ' ' .. (itemData['name'] or boii_item.id) .. '', 'success')
+                TriggerClientEvent('qb-inventory:client:ItemBox', id, itemData, 'add', amount)
+                if Player(id).state.inv_busy then TriggerClientEvent('qb-inventory:client:updateInventory', id) end
+            else
+                QBCore.Functions.Notify(source, Lang:t('notify.cgitem'), 'error')
+            end
+        else
+            QBCore.Functions.Notify(source, Lang:t('notify.idne'), 'error')
+        end
+    else
+        QBCore.Functions.Notify(source, Lang:t('notify.pdne'), 'error')
+    end
+end, 'admin')
+```
+
 ## QBCore Old Inventory : todo
 
 ### Use Items
