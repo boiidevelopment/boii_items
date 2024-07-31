@@ -6,35 +6,35 @@
     | |_) | |__| || |_ _| |_  | | | |__| | |____   \  /  | |____| |___| |__| | |    | |  | | |____| |\  |  | |   
     |____/ \____/_____|_____| | | |_____/|______|   \/   |______|______\____/|_|    |_|  |_|______|_| \_|  |_|   
                               | |                                                                                
-                              |_|                  ITEMS
+                              |_|              ITEM SYSTEM
 ]]
 
 fx_version 'cerulean'
 games { 'gta5', 'rdr3' }
 
 name 'boii_items'
-version '0.4.0'
-description 'BOII | Development - Utility: Items'
+version '0.5.0'
+description 'BOII | Development - Utility: Item System'
 author 'boiidevelopment'
 repository 'https://github.com/boiidevelopment/boii_items'
 lua54 'yes'
 
-files {
-    'assets/**/**/**',
-}
-
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/config.lua',
+    'server/init.lua',
+    'server/data/*',
+    'shared/scripts/utils.lua',
     'server/database.lua',
-    'server/items/*',
-    'server/main.lua',
-    'server/testing.lua'
+    'server/scripts/*',
+    'server/main.lua'
 }
 
 client_scripts {
     'client/init.lua',
-    'client/main.lua'
+    'client/data/*',
+    'shared/scripts/utils.lua',
+    'client/scripts/*'
 }
 
 escrow_ignore {
