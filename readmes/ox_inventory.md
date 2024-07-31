@@ -13,7 +13,7 @@ RegisterNUICallback('swapItems', function(data, cb)
 	local p_items = exports.ox_inventory:GetPlayerItems()
 	for i, d in pairs(p_items) do
 		if d.slot == data.fromSlot then
-			local boii_item = exports.boii_items:find_item(d.name)
+			local boii_item = exports.boii_items:get_item(d.name)
 			if boii_item and boii_item.on_drop then
 				TriggerServerEvent('boii_items:sv:drop', { item = d.name, amount = d.count })
 				return
