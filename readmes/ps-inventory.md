@@ -14,7 +14,7 @@ local function CreateNewDrop(source, fromSlot, toSlot, itemAmount, created)
 
 	if not itemData then return end
 
-	local boii_item = exports.boii_items:find_item(itemData.name)
+	local boii_item = exports.boii_items:get_item(itemData.name)
     if boii_item and boii_item.on_drop then
         TriggerClientEvent('ps-inventory:client:closeinv', source)
 		exports.boii_items:drop_item(source, itemData.name, itemAmount)
