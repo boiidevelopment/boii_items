@@ -1,0 +1,8 @@
+# v 0.5.0
+
++ Refactor to entire code base.
++ Added new sections for buffs, dps, and effects.
++ Added some default examples to new sections 3 screen effects (joints, bongs, edibles), 3 buffs (stamina, health, speed) and 2 debuffs (stamina, health).
++ Added functionality for repairing vehicles and a vehicle_repair_kit item. This can be limited to specific vehicle classes. 
++ Split ammo and weapon attachments into individual data files.
++ Added medical file for medic items.
