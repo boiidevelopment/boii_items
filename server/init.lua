@@ -9,7 +9,7 @@ utils = exports.boii_utils:get_utils()
 --- @field url_path: The path to your json file.
 --- @field callback: Callback to invoking resource version check details *optional*
 local opts = {
-    resource_name = 'boii_items_new',
+    resource_name = 'boii_items',
     url_path = 'boiidevelopment/fivem_resource_versions/main/versions.json',
 }
 utils.version.check(opts)
