@@ -10,7 +10,7 @@ In `qb-inventory/client/drops.lua` find the nui callback `DropItem` and replace 
 
 ```lua
 RegisterNUICallback('DropItem', function(item, cb)
-    local boii_item = exports.boii_items:find_item(item.name)
+    local boii_item = exports.boii_items:get_item(item.name)
     if boii_item and boii_item.on_drop then
         TriggerEvent('qb-inventory:client:closeInv')
         TriggerServerEvent('boii_items:sv:drop', { item = item.name, amount = item.amount })
