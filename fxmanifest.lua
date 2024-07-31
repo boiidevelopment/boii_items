@@ -38,6 +38,6 @@ client_scripts {
 }
 
 escrow_ignore {
-    'client/*',
+    'client/**/*',
     'server/**/*'
 }
