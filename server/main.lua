@@ -7,6 +7,7 @@ local function initialize_usable_items()
 
     for category, items in pairs(item_list) do
         for item_id, item_data in pairs(items) do
+            if not item_data.usable then break end
             if registered_items[item_id] then
                 if not duplicate_items[item_id] then
                     duplicate_items[item_id] = { categories = { registered_items[item_id] }, count = 1 }
